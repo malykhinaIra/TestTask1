@@ -1,0 +1,6 @@
+﻿services:
+  testtask1.web:
+    image: testtask1.web
+    build:
+      context: .
+      dockerfile: TestTask1.Web/Dockerfile
