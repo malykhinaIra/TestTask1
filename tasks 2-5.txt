@@ -1,0 +1,40 @@
+2.	 
+select column1, column2, count(*)
+from test_table
+group by column1, column2
+having count(*) > 1;
+
+delete from test_table
+where id not in (
+    select max(id)
+    from test_table
+    group by column1, column2
+);
+
+
+3.1.	
+select *
+from EMPLOYEES e
+left join DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID;
+
+3.2.
+select d.DEPARTMENT_NAME, avg(e.SALARY) AS AVERAGE_SALARY
+from EMPLOYEES e
+left join DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+group by d.DEPARTMENT_NAME;
+
+
+4. 
+select DEPT_ID, min(SALARY) as min, max(SALARY) as max
+from EMPLOYEES
+group by DEPT_ID
+having min(SALARY) < 5000 and max(SALARY) > 15000;
+
+
+5.1.
+- Що станеться і чому:
+Якщо не встановлено CASCADE DELETE на зовнішній ключ між таблицями EMPLOYEES і DEPARTMENTS, виникне помилка, оскільки у таблиці EMPLOYEES є співробітники, які належать до відділу з department_id = 40.
+
+5.2.
+- Що станеться і чому:
+SQL-синтаксис для операції DELETE не дозволяє вказувати конкретні колонки для видалення, тому виникне помилка.
