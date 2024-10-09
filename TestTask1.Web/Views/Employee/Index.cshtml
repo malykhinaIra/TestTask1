@@ -1,18 +1,86 @@
-﻿@model TModel
-
+﻿@model TestTask1.Web.ViewModels.EmployeeViewModel[]
 @{
-    Layout = null;
+ViewData["Title"] = "Персонал";
 }
 
-<!DOCTYPE html>
+<h1>Персонал</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<form id="searchForm">
+    <div>
+        <select id="departmentIdentifier" name="departmentIdentifier" class="form-control">
+            <option value="">Відділ</option>
+            @foreach (var department in ViewBag.Departments)
+            {
+                <option value="@department.Identifier">@department.Name</option>
+            }
+        </select>
+        <br/>
+        <select id="positionIdentifier" name="positionIdentifier" class="form-control">
+            <option value="">Посада</option>
+        </select>
+        <br/>
+        <input type="text" id="fullName" name="fullName" placeholder="ПІБ" />
+
+        <button type="submit" class="btn btn-primary">Пошук</button>
+    </div>
+</form>
+
+<div id="employeeList">
+    <h2>Працівники</h2>
+    <ul>
+        @foreach (var employee in Model)
+        {
+        <li>
+            <button onclick="editEmployee(@employee.Identifier)">@employee.FirstName @employee.LastName @employee.Patronymic</button>
+            <br/>
+            </li>
+        }
+    </ul>
 </div>
-</body>
-</html>
+
+<script>
+    document.getElementById("departmentIdentifier").addEventListener("change", function () {
+        const departmentIdentifier = this.value;
+
+        fetch(`/Position/GetByDepartment?departmentId=${departmentIdentifier}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    const positionSelect = document.getElementById("positionIdentifier");
+                    positionSelect.innerHTML = '<option value="">Посада</option>';
+
+                    data.data.forEach(position => {
+                        const option = document.createElement("option");
+                        option.value = position.identifier;
+                        option.textContent = position.title;
+                        positionSelect.appendChild(option);
+                    });
+                }
+            });
+    });
+    
+    document.getElementById("searchForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        searchEmployees();
+    });
+
+    function searchEmployees() {
+        const departmentIdentifier = document.getElementById("departmentIdentifier").value;
+        const positionIdentifier = document.getElementById("positionIdentifier").value;
+        const query = document.getElementById("fullName").value;
+
+        fetch(`/Employee/Search?departmentIdentifier=${departmentIdentifier}&positionIdentifier=${positionIdentifier}&query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const employeeList = document.getElementById("employeeList");
+                employeeList.innerHTML = '<h2>Працівники</h2><ul>' + data.data.map(employee =>
+                    `<li> <button  onclick="editEmployee(${employee.identifier}) ">${employee.firstName} ${employee.lastName} ${employee.patronymic}</button></li>`
+                ).join('') + '</ul>';
+            });
+    }
+
+    function editEmployee(identifier) {
+        window.location.href = `/Employee/Edit/${identifier}`;
+    }
+
+</script>

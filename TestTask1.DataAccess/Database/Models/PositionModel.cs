@@ -2,5 +2,6 @@
 
 public class PositionModel
 {
-    
+    public int Identifier { get; init; }
+    public string Title { get; init; }
 }

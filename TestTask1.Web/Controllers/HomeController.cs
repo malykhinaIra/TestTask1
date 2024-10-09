@@ -1,26 +1,30 @@
 using System.Diagnostics;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using TestTask1.Web.Models;
+using TestTask1.Business.Entities;
+using TestTask1.Business.Repositories;
+using TestTask1.Web.ViewModels;
 
 namespace TestTask1.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    readonly ICompanyInfoRepository _companyInfo;
 
-    public HomeController(ILogger<HomeController> logger)
+    readonly IMapper _mapper;
+
+    public HomeController(ICompanyInfoRepository companyInfo, IMapper mapper)
     {
-        _logger = logger;
+        _companyInfo = companyInfo;
+        
+        _mapper = mapper;
     }
 
     public IActionResult Index()
     {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
+        var companyInfo = _companyInfo.GetOneAsync();
+        
+        return View(_mapper.Map<CompanyInfo, CompanyInfoViewModel>(companyInfo));
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

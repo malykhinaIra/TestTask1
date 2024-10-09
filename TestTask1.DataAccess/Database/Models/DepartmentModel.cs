@@ -2,5 +2,6 @@
 
 public class DepartmentModel
 {
-    
+    public int Identifier { get; init; }
+    public string Name { get; init; }
 }

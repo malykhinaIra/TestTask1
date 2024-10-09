@@ -7,6 +7,6 @@ public class CompanyInfoCommonRepository : ICompanyInfoRepository
 {
     public CompanyInfo GetOneAsync()
     {
-        return new CompanyInfo("ТехноГруп", "вул. Хрещатик, 23", "+380978454130");
+        return new CompanyInfo(1, "ТехноГруп", "вул. Хрещатик, 23", "+380978454130");
     }
 }

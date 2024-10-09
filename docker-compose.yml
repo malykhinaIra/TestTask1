@@ -1,6 +1,26 @@
 ﻿services:
-  testtask1.web:
-    image: testtask1.web
+  task1:
+    image: task1
     build:
       context: .
       dockerfile: TestTask1.Web/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Server=db,1433;Initial Catalog=master;Persist Security Info=False;User ID=SA;Password=123456a@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=123456a@
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+volumes:
+  mssql_data:

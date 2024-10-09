@@ -2,5 +2,6 @@
 
 public class PositionViewModel
 {
-    
+    public int Identifier { get; init; }
+    public string Title { get; init; }
 }

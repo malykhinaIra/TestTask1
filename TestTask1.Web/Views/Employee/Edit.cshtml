@@ -1,18 +1,81 @@
-﻿@model TModel
-
+﻿@model TestTask1.Web.ViewModels.EmployeeViewModel
 @{
-    Layout = null;
+ViewData["Title"] = "Edit Employee";
 }
 
-<!DOCTYPE html>
+<h1>Edit Employee</h1>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+<form id="editForm" class="form-control">
+    <input type="hidden" asp-for="Identifier" />
+    <div>
+        <label asp-for="FirstName">Ім'я:</label>
+        <input asp-for="FirstName" required />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="LastName">Прізвище:</label>
+        <input asp-for="LastName" required />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="Patronymic">По-батькові:</label>
+        <input asp-for="Patronymic" required />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="Address">Адреса:</label>
+        <input asp-for="Address" />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="DateOfBirth">Дата народження:</label>
+        <input asp-for="DateOfBirth" type="date" />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="DateOfEmployment">Дата працевлаштування:</label>
+        <input asp-for="DateOfEmployment" type="date" />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="PhoneNumber">Номер телефону:</label>
+        <input asp-for="PhoneNumber" />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="Salary">Оклад:</label>
+        <input asp-for="Salary" type="number" step="0.01" />
+    </div>
+    <br/>
+    <div>
+        <label asp-for="DepartmentIdentifier">Відділ:</label>
+        <select asp-for="DepartmentIdentifier" asp-items="@(new SelectList(ViewBag.Departments, "Identifier", "Name"))"></select>
+    </div>
+    <br/>
+    <div>
+        <label asp-for="PositionIdentifier">Посада:</label>
+        <select asp-for="PositionIdentifier" asp-items="@(new SelectList(ViewBag.Positions, "Identifier", "Title"))"></select>
+    </div>
+    <br/>
+    <button class="btn btn-primary" type="submit">Зберегти</button>
+</form>
+
+@section Scripts {
+<script>
+    document.getElementById("editForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch(`/Employee/Edit`, {
+            method: 'PUT',
+            body: formData
+        }).then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = '/Employee/Index';
+                } else {
+                    alert('Validation error: ' + data.validation.join(', '));
+                }
+            });
+    });
+</script>
+}

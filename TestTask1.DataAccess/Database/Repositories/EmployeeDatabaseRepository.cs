@@ -7,11 +7,11 @@ using TestTask1.DataAccess.Database.Models;
 
 namespace TestTask1.DataAccess.Database.Repositories;
 
-public class EmployeeRepository : IEmployeeRepository
+public class EmployeeDatabaseRepository : IEmployeeRepository
 {
     readonly string _connectionString;
 
-    public EmployeeRepository(DatabaseSettings databaseSettings)
+    public EmployeeDatabaseRepository(DatabaseSettings databaseSettings)
     {
         _connectionString = databaseSettings.ConnectionString;
     }

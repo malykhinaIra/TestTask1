@@ -2,6 +2,22 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTask1.Web", "TestTask1.Web\TestTask1.Web.csproj", "{0CC9D026-0269-4C84-B9D9-0406593287EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1037F18A-F376-44B4-AFF8-49DCC0433AF0}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTask1.Business", "TestTask1.Business\TestTask1.Business.csproj", "{D40C144E-26E6-4F14-8EF3-A398374F0224}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTask1.DataAccess", "TestTask1.DataAccess\TestTask1.DataAccess.csproj", "{71FE1F03-9023-4E03-BD50-15150C48120F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{6C794673-5B24-4FEC-8643-A72BEFB766B9}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\create_procedures_scripts.sql = scripts\create_procedures_scripts.sql
+		scripts\create_tables_scripts.sql = scripts\create_tables_scripts.sql
+		scripts\insert_data_scripts.sql = scripts\insert_data_scripts.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +28,16 @@ Global
 		{0CC9D026-0269-4C84-B9D9-0406593287EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CC9D026-0269-4C84-B9D9-0406593287EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CC9D026-0269-4C84-B9D9-0406593287EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D40C144E-26E6-4F14-8EF3-A398374F0224}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D40C144E-26E6-4F14-8EF3-A398374F0224}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D40C144E-26E6-4F14-8EF3-A398374F0224}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D40C144E-26E6-4F14-8EF3-A398374F0224}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71FE1F03-9023-4E03-BD50-15150C48120F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71FE1F03-9023-4E03-BD50-15150C48120F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71FE1F03-9023-4E03-BD50-15150C48120F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71FE1F03-9023-4E03-BD50-15150C48120F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6C794673-5B24-4FEC-8643-A72BEFB766B9} = {1037F18A-F376-44B4-AFF8-49DCC0433AF0}
 	EndGlobalSection
 EndGlobal

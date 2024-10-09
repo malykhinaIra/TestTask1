@@ -1,18 +1,134 @@
-﻿@model TModel
+﻿@model TestTask1.Web.ViewModels.SalaryReportViewModel
 
 @{
-    Layout = null;
+ViewData["Title"] = "Зарплатна звітність";
 }
 
-<!DOCTYPE html>
+<h2>Зарплатна звітність</h2>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<form id="salaryReportForm">
+    <div class="form-group">
+        <select id="departmentIdentifier" class="form-control" name="departmentIdentifier">
+            <option value="">Відділ</option>
+            @foreach (var department in ViewBag.Departments)
+            {
+            <option value="@department.Identifier">@department.Name</option>
+            }
+        </select>
+    </div>
+    <br/>
+    <div class="form-group">
+        <select id="positionIdentifier" class="form-control" name="positionIdentifier">
+            <option value="">Посада</option>
+            @foreach (var position in ViewBag.Positions)
+            {
+            <option value="@position.Identifier">@position.Title</option>
+            }
+        </select>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Сформувати звіт</button>
+</form>
+
+<hr />
+
+<div id="reportContainer">
+    <h3>Показники</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Загальна сума окладів</th>
+            <th>Середній оклад</th>
+            <th>Максимальний оклад</th>
+            <th>Мінімальний оклад</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@Model.TotalSalary</td>
+            <td>@Model.AverageSalary</td>
+            <td>@Model.MaxSalary</td>
+            <td>@Model.MinSalary</td>
+        </tr>
+        </tbody>
+    </table>
+    <br/>
+    <button id="exportReportBtn" class="btn btn-success" style="display:none;">Завантажити звіт</button>
 </div>
-</body>
-</html>
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        $('#salaryReportForm').submit(function (e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var url = '@Url.Action("Search", "SalaryReport")';
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.ok) {
+                        $('#reportContainer').html(`
+                            <h3>Загальні показники</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Загальна сума окладів</th>
+                                        <th>Середній оклад</th>
+                                        <th>Максимальний оклад</th>
+                                        <th>Мінімальний оклад</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${response.data.totalSalary}</td>
+                                        <td>${response.data.averageSalary}</td>
+                                        <td>${response.data.maxSalary}</td>
+                                        <td>${response.data.minSalary}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <form id="exportForm" action="@Url.Action("ExportToTxt", "SalaryReport")" method="get">
+                                <input type="hidden" name="TotalSalary" value="${response.data.totalSalary}">
+                                <input type="hidden" name="AverageSalary" value="${response.data.averageSalary}">
+                                <input type="hidden" name="MaxSalary" value="${response.data.maxSalary}">
+                                <input type="hidden" name="MinSalary" value="${response.data.minSalary}">
+                                <button type="submit" class="btn btn-success">Завантажити звіт</button>
+                            </form>
+                        `);
+                    }
+                },
+                error: function () {
+                    alert('Помилка при формуванні звіту.');
+                }
+            });
+        });
+
+        $('#departmentIdentifier').change(function () {
+            let departmentId = $(this).val();
+            let url = '@Url.Action("GetByDepartment", "Position")';
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: { departmentId: departmentId },
+                success: function (response) {
+                    var positionSelect = $('#positionIdentifier');
+                    positionSelect.empty();
+                    positionSelect.append('<option value="">Посада</option>');
+
+                    $.each(response.data, function (index, position) {
+                        positionSelect.append(`<option value="${position.identifier}">${position.title}</option>`);
+                    });
+                },
+                error: function () {
+                    alert('Помилка при отриманні посад.');
+                }
+            });
+        });
+    });
+</script>
+}

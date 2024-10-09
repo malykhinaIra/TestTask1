@@ -1,10 +1,10 @@
 ﻿namespace TestTask1.DataAccess.Database.Configuration;
 
-public class Settings
+public class DatabaseSettings
 {
     public string ConnectionString { get; }
 
-    public Settings(string connectionString)
+    public DatabaseSettings(string connectionString)
     {
         ConnectionString = connectionString;
     }
