@@ -30,6 +30,8 @@ CREATE TABLE Accounting.Employees
     Salary DECIMAL(18, 2) NOT NULL,
     DepartmentIdentifier INT NOT NULL,
     PositionIdentifier INT NOT NULL,
-    CONSTRAINT FK_Employee_Position FOREIGN KEY (PositionIdentifier) REFERENCES Accounting.Positions(Identifier),
+    CONSTRAINT FK_Employee_Department FOREIGN KEY (DepartmentIdentifier) REFERENCES Accounting.Departments(Identifier),
+    CONSTRAINT FK_Employee_Position FOREIGN KEY (PositionIdentifier) REFERENCES Accounting.Positions(Identifier)
 )
 GO
+

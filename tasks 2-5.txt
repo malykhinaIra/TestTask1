@@ -1,15 +1,19 @@
-2.	 
-select column1, column2, count(*)
-from test_table
-group by column1, column2
+2.1.
+select FirstName, LastName, count(*) AS DuplicateCount
+from Employees
+group by FirstName, LastName
 having count(*) > 1;
 
-delete from test_table
-where id not in (
-    select max(id)
-    from test_table
-    group by column1, column2
-);
+2.2
+select * into #UniqueRows
+from Employees as E1
+where CreatedAt = (select max(CreatedAt)
+                          from Employees as E2
+                          where E1.FirstName = E2.FirstName
+                            and E1.LastName = E2.LastName);
+
+delete from Employees
+where Identifier not in (select Identifier from #UniqueRows);
 
 
 3.1.	
@@ -25,7 +29,7 @@ group by d.DEPARTMENT_NAME;
 
 
 4. 
-select DEPT_ID, min(SALARY) as min, max(SALARY) as max
+select DEPT_ID, min(SALARY) as MIN_SALARY, max(SALARY) as MAX_SALARY
 from EMPLOYEES
 group by DEPT_ID
 having min(SALARY) < 5000 and max(SALARY) > 15000;
