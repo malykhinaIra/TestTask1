@@ -5,50 +5,6 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE Accounting.GetAllDepartments
-AS
-BEGIN
-    SELECT * FROM Accounting.Departments;
-END
-GO
-
-CREATE PROCEDURE Accounting.GetEmployees
-    @DepartmentIdentifier INT = NULL,
-    @PositionIdentifier INT = NULL,
-    @SearchTerm NVARCHAR(255) = NULL
-AS
-BEGIN
-    SELECT *
-    FROM Accounting.Employees
-    WHERE (@DepartmentIdentifier IS NULL OR DepartmentIdentifier = @DepartmentIdentifier)
-      AND (@PositionIdentifier IS NULL OR PositionIdentifier = @PositionIdentifier)
-      AND (@SearchTerm IS NULL OR
-           FirstName LIKE '%' + @SearchTerm + '%' OR
-           LastName LIKE '%' + @SearchTerm + '%' OR
-           PhoneNumber LIKE '%' + @SearchTerm + '%');
-END;
-GO
-
-CREATE PROCEDURE Accounting.GetEmployee
-@Identifier INT
-AS
-BEGIN
-    SELECT *
-    FROM Accounting.Employees
-    WHERE (Identifier = @Identifier);
-END;
-GO
-
-CREATE PROCEDURE Accounting.GetPosition
-@Identifier INT
-AS
-BEGIN
-    SELECT *
-    FROM Accounting.Positions
-    WHERE (Identifier = @Identifier);
-END;
-GO
-
 CREATE PROCEDURE Accounting.GetPositionsByDepartment
 @DepartmentIdentifier INT
 AS
@@ -64,13 +20,52 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE Accounting.GetDepartment
+CREATE PROCEDURE Accounting.GetAllDepartments
+AS
+BEGIN
+    SELECT * FROM Accounting.Departments;
+END
+GO
+
+CREATE PROCEDURE Accounting.GetDepartmentsByPosition
+@PositionIdentifier INT
+AS
+BEGIN
+    SELECT d.*
+    FROM Accounting.Departments d
+    WHERE d.Name IN (
+        SELECT DISTINCT dep.Name
+        FROM Accounting.Employees e
+                 INNER JOIN Accounting.Departments dep ON e.DepartmentIdentifier = dep.Identifier
+        WHERE e.PositionIdentifier = @PositionIdentifier
+    );
+END;
+GO
+
+CREATE PROCEDURE Accounting.GetEmployee
 @Identifier INT
 AS
 BEGIN
     SELECT *
-    FROM Accounting.Departments
+    FROM Accounting.Employees
     WHERE (Identifier = @Identifier);
+END;
+GO
+
+CREATE PROCEDURE Accounting.GetEmployees
+    @DepartmentIdentifier INT = NULL,
+    @PositionIdentifier INT = NULL,
+    @SearchTerm NVARCHAR(255) = NULL
+AS
+BEGIN
+    SELECT *
+    FROM Accounting.Employees
+    WHERE (@DepartmentIdentifier IS NULL OR DepartmentIdentifier = @DepartmentIdentifier)
+      AND (@PositionIdentifier IS NULL OR PositionIdentifier = @PositionIdentifier)
+      AND (@SearchTerm IS NULL OR
+           FirstName LIKE '%' + @SearchTerm + '%' OR
+           LastName LIKE '%' + @SearchTerm + '%' OR
+           Patronymic LIKE '%' + @SearchTerm + '%');
 END;
 GO
 

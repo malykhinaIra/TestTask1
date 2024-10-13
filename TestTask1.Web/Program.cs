@@ -1,8 +1,14 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TestTask1.Business.Repositories;
-using TestTask1.DataAccess.Common.Repositories;
+using TestTask1.Business.Storages;
+using TestTask1.DataAccess.Common.Storages;
 using TestTask1.DataAccess.Database.Configuration;
 using TestTask1.DataAccess.Database.Repositories;
+using TestTask1.DataAccess.Database.Storages;
 using TestTask1.Web.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,11 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(ContractProfile)));
 
-builder.Services.AddSingleton<DatabaseSettings>(_ => new DatabaseSettings(builder.Configuration.GetConnectionString("Default")!));
+builder.Services.AddSingleton(_ => new DatabaseSettings(builder.Configuration.GetConnectionString("Default")!));
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeDatabaseRepository>();
 builder.Services.AddSingleton<IPositionRepository, PositionDatabaseRepository>();
 builder.Services.AddSingleton<IDepartmentRepository, DepartmentDatabaseRepository>();
-builder.Services.AddSingleton<ICompanyInfoRepository, CompanyInfoCommonRepository>();
+builder.Services.AddSingleton<ICompanyInfoStorage, CompanyInfoCommonStorage>();
+builder.Services.AddSingleton<ISalaryReportStorage, SalaryReportDatabaseStorage>();
 
 var app = builder.Build();
 

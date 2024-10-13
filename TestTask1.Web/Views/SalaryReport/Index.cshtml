@@ -45,10 +45,10 @@ ViewData["Title"] = "Зарплатна звітність";
         </thead>
         <tbody>
         <tr>
-            <td>@Model.TotalSalary</td>
-            <td>@Model.AverageSalary</td>
-            <td>@Model.MaxSalary</td>
-            <td>@Model.MinSalary</td>
+            <td>@Model?.TotalSalary</td>
+            <td>@Model?.AverageSalary</td>
+            <td>@Model?.MaxSalary</td>
+            <td>@Model?.MinSalary</td>
         </tr>
         </tbody>
     </table>
@@ -57,7 +57,7 @@ ViewData["Title"] = "Зарплатна звітність";
 </div>
 
 @section Scripts {
-<script>
+    <script>
     $(document).ready(function () {
         $('#salaryReportForm').submit(function (e) {
             e.preventDefault();
@@ -72,7 +72,7 @@ ViewData["Title"] = "Зарплатна звітність";
                 success: function (response) {
                     if (response.ok) {
                         $('#reportContainer').html(`
-                            <h3>Загальні показники</h3>
+                            <h3>Показники</h3>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -109,6 +109,7 @@ ViewData["Title"] = "Зарплатна звітність";
 
         $('#departmentIdentifier').change(function () {
             let departmentId = $(this).val();
+            let positionId = $('#positionIdentifier').val();
             let url = '@Url.Action("GetByDepartment", "Position")';
 
             $.ajax({
@@ -116,16 +117,43 @@ ViewData["Title"] = "Зарплатна звітність";
                 url: url,
                 data: { departmentId: departmentId },
                 success: function (response) {
-                    var positionSelect = $('#positionIdentifier');
-                    positionSelect.empty();
-                    positionSelect.append('<option value="">Посада</option>');
+                    if (positionId === "") {
+                        let positionSelect = $('#positionIdentifier');
+                        positionSelect.empty();
+                        positionSelect.append('<option value="">Посада</option>');
 
-                    $.each(response.data, function (index, position) {
-                        positionSelect.append(`<option value="${position.identifier}">${position.title}</option>`);
-                    });
+                        $.each(response.data, function (index, position) {
+                            positionSelect.append(`<option value="${position.identifier}">${position.title}</option>`);
+                        });
+                    }
                 },
                 error: function () {
                     alert('Помилка при отриманні посад.');
+                }
+            });
+        });
+        $('#positionIdentifier').change(function () {
+            let positionId = $(this).val();
+            let departmentId = $('#departmentIdentifier').val();
+            let url = '@Url.Action("GetByPosition", "Department")';
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: { positionId: positionId },
+                success: function (response) {
+                    if (departmentId === "") {
+                        let departmentSelect = $('#departmentIdentifier');
+                        departmentSelect.empty();
+                        departmentSelect.append('<option value="">Відділ</option>');
+
+                        $.each(response.data, function (index, department) {
+                            departmentSelect.append(`<option value="${department.identifier}">${department.name}</option>`);
+                        });
+                    }
+                },
+                error: function () {
+                    alert('Помилка при отриманні відділів.');
                 }
             });
         });

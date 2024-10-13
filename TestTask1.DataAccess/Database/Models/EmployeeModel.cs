@@ -1,4 +1,6 @@
-﻿namespace TestTask1.DataAccess.Database.Models;
+﻿using System;
+
+namespace TestTask1.DataAccess.Database.Models;
 
 public class EmployeeModel
 {

@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using TestTask1.Business.Entities;
 using TestTask1.Business.Repositories;
@@ -44,20 +47,20 @@ public class DepartmentDatabaseRepository : IDepartmentRepository
         return departments.Select(Map).ToArray();
     }
     
-    public async Task<Department> GetOneAsync(int identifier)
+    public async Task<Department[]> GetManyByPositionAsync(int positionIdentifier)
     {
-        var department = new DepartmentModel();
+        var departments = new List<DepartmentModel>();
 
         await using (SqlConnection connection = new(_connectionString))
         {
             await connection.OpenAsync();
 
-            var command = new SqlCommand("Accounting.GetDepartment", connection)
+            var command = new SqlCommand("Accounting.GetDepartmentsByPosition", connection)
             {
                 CommandType = CommandType.StoredProcedure,
                 Parameters =
                 {
-                    new SqlParameter("@Identifier", identifier)
+                    new SqlParameter("@PositionIdentifier", positionIdentifier)
                 }
             };
 
@@ -65,15 +68,15 @@ public class DepartmentDatabaseRepository : IDepartmentRepository
 
             while (await result.ReadAsync())
             {
-                department = new DepartmentModel
+                departments.Add(new DepartmentModel
                 {
                     Identifier = result.GetInt32("Identifier"),
                     Name = result.GetString("Name")
-                };
+                });
             }
         }
 
-        return Map(department);
+        return departments.Select(Map).ToArray();
     }
 
     static Department Map(DepartmentModel model)

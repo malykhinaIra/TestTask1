@@ -17,6 +17,10 @@ ViewData["Title"] = "Персонал";
         <br/>
         <select id="positionIdentifier" name="positionIdentifier" class="form-control">
             <option value="">Посада</option>
+            @foreach (var position in ViewBag.Positions)
+            {
+            <option value="@position.Identifier">@position.Title</option>
+            }
         </select>
         <br/>
         <input type="text" id="fullName" name="fullName" placeholder="ПІБ" />
@@ -31,7 +35,7 @@ ViewData["Title"] = "Персонал";
         @foreach (var employee in Model)
         {
         <li>
-            <button onclick="editEmployee(@employee.Identifier)">@employee.FirstName @employee.LastName @employee.Patronymic</button>
+            <button onclick="editEmployee(@employee.Identifier)">@employee.LastName @employee.FirstName @employee.Patronymic</button>
             <br/>
             </li>
         }
@@ -41,22 +45,47 @@ ViewData["Title"] = "Персонал";
 <script>
     document.getElementById("departmentIdentifier").addEventListener("change", function () {
         const departmentIdentifier = this.value;
+        
+        if (document.getElementById("positionIdentifier").value === "")
+        {
+            fetch(`/Position/GetByDepartment?departmentId=${departmentIdentifier}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        const positionSelect = document.getElementById("positionIdentifier");
+                        positionSelect.innerHTML = '<option value="">Посада</option>';
 
-        fetch(`/Position/GetByDepartment?departmentId=${departmentIdentifier}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    const positionSelect = document.getElementById("positionIdentifier");
-                    positionSelect.innerHTML = '<option value="">Посада</option>';
+                        data.data.forEach(position => {
+                            const option = document.createElement("option");
+                            option.value = position.identifier;
+                            option.textContent = position.title;
+                            positionSelect.appendChild(option);
+                        });
+                    }
+                });
+        }
+    });
 
-                    data.data.forEach(position => {
-                        const option = document.createElement("option");
-                        option.value = position.identifier;
-                        option.textContent = position.title;
-                        positionSelect.appendChild(option);
-                    });
-                }
-            });
+    document.getElementById("positionIdentifier").addEventListener("change", function () {
+        const positionIdentifier = this.value;
+        
+        if (document.getElementById("departmentIdentifier").value === "") {
+            fetch(`/Department/GetByPosition?positionId=${positionIdentifier}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        const departmentSelect = document.getElementById("departmentIdentifier");
+                        departmentSelect.innerHTML = '<option value="">Відділ</option>';
+
+                        data.data.forEach(department => {
+                            const option = document.createElement("option");
+                            option.value = department.identifier;
+                            option.textContent = department.name;
+                            departmentSelect.appendChild(option);
+                        });
+                    }
+                });
+        }
     });
     
     document.getElementById("searchForm").addEventListener("submit", function (event) {
@@ -74,7 +103,7 @@ ViewData["Title"] = "Персонал";
             .then(data => {
                 const employeeList = document.getElementById("employeeList");
                 employeeList.innerHTML = '<h2>Працівники</h2><ul>' + data.data.map(employee =>
-                    `<li> <button  onclick="editEmployee(${employee.identifier}) ">${employee.firstName} ${employee.lastName} ${employee.patronymic}</button></li>`
+                    `<li> <button  onclick="editEmployee(${employee.identifier}) ">${employee.lastName} ${employee.firstName} ${employee.patronymic}</button></li>`
                 ).join('') + '</ul>';
             });
     }

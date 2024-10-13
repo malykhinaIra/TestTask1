@@ -1,4 +1,6 @@
-﻿namespace TestTask1.Web.ViewModels;
+﻿using System;
+
+namespace TestTask1.Web.ViewModels;
 
 public class EmployeeViewModel
 {

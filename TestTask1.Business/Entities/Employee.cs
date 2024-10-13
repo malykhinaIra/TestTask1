@@ -1,4 +1,6 @@
-﻿namespace TestTask1.Business.Entities;
+﻿using System;
+
+namespace TestTask1.Business.Entities;
 
 public class Employee
 {

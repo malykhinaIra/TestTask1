@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using TestTask1.Business.Entities;
 using TestTask1.Business.Repositories;
@@ -42,38 +45,6 @@ public class PositionDatabaseRepository : IPositionRepository
         }
 
         return positions.Select(Map).ToArray();
-    }
-    
-    public async Task<Position> GetOneAsync(int identifier)
-    {
-        var position = new PositionModel();
-
-        await using (SqlConnection connection = new(_connectionString))
-        {
-            await connection.OpenAsync();
-
-            var command = new SqlCommand("Accounting.GetPosition", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-                Parameters =
-                {
-                    new SqlParameter("@Identifier", identifier)
-                }
-            };
-
-            var result = await command.ExecuteReaderAsync();
-
-            while (await result.ReadAsync())
-            {
-                position = new PositionModel
-                {
-                    Identifier = result.GetInt32("Identifier"),
-                    Title = result.GetString("Title")
-                };
-            }
-        }
-
-        return Map(position);
     }
     
     public async Task<Position[]> GetManyByDepartmentAsync(int departmentIdentifier)

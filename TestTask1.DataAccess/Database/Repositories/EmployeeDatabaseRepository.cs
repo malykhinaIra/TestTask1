@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using TestTask1.Business.Entities;
 using TestTask1.Business.Repositories;
@@ -45,7 +48,7 @@ public class EmployeeDatabaseRepository : IEmployeeRepository
         }
     }
 
-    public async Task<Employee[]> GetManyAsync(int? departmentIdentifier, int? positionIdentifier, string? query)
+    public async Task<Employee[]> GetManyAsync(int? departmentIdentifier, int? positionIdentifier, string query)
     {
         var employees = new List<EmployeeModel>();
 
@@ -164,41 +167,6 @@ public class EmployeeDatabaseRepository : IEmployeeRepository
         }
 
         return Map(employee);
-    }
-
-    public async Task<SalaryReport> GetSalaryReportAsync(int? departmentIdentifier = null, int? positionIdentifier = null)
-    {
-        var report = new SalaryReportModel();
-
-        await using (SqlConnection connection = new(_connectionString))
-        {
-            await connection.OpenAsync();
-
-            var command = new SqlCommand("Accounting.GetSalaryReport", connection)
-            {
-                CommandType = CommandType.StoredProcedure,
-                Parameters =
-                {
-                    new SqlParameter("@DepartmentIdentifier", departmentIdentifier),
-                    new SqlParameter("@PositionIdentifier", positionIdentifier)
-                }
-            };
-
-            var result = await command.ExecuteReaderAsync();
-
-            while (await result.ReadAsync())
-            {
-                report = new SalaryReportModel
-                {
-                    TotalSalary = result.GetDecimal("TotalSalary"),
-                    AverageSalary = result.GetDecimal("AverageSalary"),
-                    MinSalary = result.GetDecimal("MinSalary"),
-                    MaxSalary = result.GetDecimal("MaxSalary"),
-                };
-            }
-        }
-
-        return new SalaryReport(report.TotalSalary, report.AverageSalary,report.MaxSalary, report.MinSalary);
     }
 
     static Employee Map(EmployeeModel model)

@@ -1,19 +1,19 @@
 using System.Diagnostics;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using TestTask1.Business.Entities;
-using TestTask1.Business.Repositories;
+using TestTask1.Business.Storages;
+using TestTask1.Business.ValueObjects;
 using TestTask1.Web.ViewModels;
 
 namespace TestTask1.Web.Controllers;
 
 public class HomeController : Controller
 {
-    readonly ICompanyInfoRepository _companyInfo;
+    readonly ICompanyInfoStorage _companyInfo;
 
     readonly IMapper _mapper;
 
-    public HomeController(ICompanyInfoRepository companyInfo, IMapper mapper)
+    public HomeController(ICompanyInfoStorage companyInfo, IMapper mapper)
     {
         _companyInfo = companyInfo;
         
@@ -22,7 +22,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        var companyInfo = _companyInfo.GetOneAsync();
+        var companyInfo = _companyInfo.GetCompanyInfo();
         
         return View(_mapper.Map<CompanyInfo, CompanyInfoViewModel>(companyInfo));
     }

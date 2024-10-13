@@ -1,4 +1,4 @@
-﻿namespace TestTask1.Business.Entities;
+﻿namespace TestTask1.Business.ValueObjects;
 
 public class SalaryReport
 {

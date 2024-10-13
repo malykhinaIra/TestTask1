@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TestTask1.Business.Entities;
+using TestTask1.Business.ValueObjects;
 using TestTask1.Web.ViewModels;
 
 namespace TestTask1.Web.Mappers;
